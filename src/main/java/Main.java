@@ -13,6 +13,7 @@ public class Main extends Application {
 
     private Image userImage = new Image(this.getClass().getResourceAsStream("/images/DaUser.png"));
     private Image dukeImage = new Image(this.getClass().getResourceAsStream("/images/DaDuke.png"));
+    private Duke duke = new Duke();
 
     private ScrollPane scrollPane;
     private VBox dialogContainer;
@@ -31,8 +32,13 @@ public class Main extends Application {
         userInput = new TextField();
         sendButton = new Button("Send");
 
-        DialogBox dialogBox = new DialogBox("Hello!", userImage);
-        dialogContainer.getChildren().addAll(dialogBox);
+        //Handling user input
+        sendButton.setOnMouseClicked((event) -> {
+            handleUserInput();
+        });
+        userInput.setOnAction((event) -> {
+            handleUserInput();
+        });
 
         AnchorPane mainLayout = new AnchorPane();
 
@@ -51,6 +57,8 @@ public class Main extends Application {
         scrollPane.setFitToWidth(true);
 
         dialogContainer.setPrefHeight(Region.USE_COMPUTED_SIZE);
+        //Scroll down to the end every time dialogContainer's height changes.
+        dialogContainer.heightProperty().addListener((observable) -> scrollPane.setVvalue(1.0));
 
         userInput.setPrefWidth(325.0);
 
@@ -72,5 +80,19 @@ public class Main extends Application {
         stage.show();
 
         //More code to be added here later
+    }
+
+    /**
+     * Creates a dialog box containing user input, and appends it to
+     * the dialog container. Clears the user input after processing.
+     */
+    private void handleUserInput() {
+        String userText = userInput.getText();
+        String dukeText = duke.getResponse(userInput.getText());
+        dialogContainer.getChildren().addAll(
+            DialogBox.getUserDialog(userText, userImage),
+            DialogBox.getDukeDialog(dukeText, dukeImage)
+        );
+        userInput.clear();
     }
 }
